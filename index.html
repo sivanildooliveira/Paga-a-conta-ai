@@ -606,16 +606,28 @@ function criarFlash(classe) {
 const som = {
     ctx: null,
     ativo: true,
+    desbloqueado: false,
 
-    /** Inicializa o AudioContext (precisa de gesto do usuário) */
     inicializar() {
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+
+        // Hack obrigatório para iOS
+        if (!this.desbloqueado) {
+            const buffer = this.ctx.createBuffer(1, 1, 22050);
+            const source = this.ctx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(this.ctx.destination);
+            source.start(0);
+            this.desbloqueado = true;
+        }
     },
 
-    /** Som curto de "pop" ao colocar dedo */
     pop() {
         if (!this.ativo || !this.ctx) return;
         const o = this.ctx.createOscillator();
@@ -629,7 +641,6 @@ const som = {
         o.start(); o.stop(this.ctx.currentTime + 0.15);
     },
 
-    /** Efeito de tensão crescente */
     tensao(duracao) {
         if (!this.ativo || !this.ctx) return;
         const o = this.ctx.createOscillator();
@@ -644,10 +655,9 @@ const som = {
         o.start(); o.stop(this.ctx.currentTime + duracao / 1000 + 0.2);
     },
 
-    /** "Tcharam!" — fanfarra de resultado */
     fanfarra() {
         if (!this.ativo || !this.ctx) return;
-        const notas = [523, 659, 784, 1047]; // C5 E5 G5 C6
+        const notas = [523, 659, 784, 1047];
         notas.forEach((freq, i) => {
             const o = this.ctx.createOscillator();
             const g = this.ctx.createGain();
@@ -661,7 +671,6 @@ const som = {
         });
     },
 
-    /** Risada zoeira (buzzy descending) */
     risada() {
         if (!this.ativo || !this.ctx) return;
         for (let i = 0; i < 6; i++) {
@@ -678,7 +687,6 @@ const som = {
         }
     },
 
-    /** Som de erro */
     erro() {
         if (!this.ativo || !this.ctx) return;
         const o = this.ctx.createOscillator();
@@ -692,7 +700,6 @@ const som = {
         o.start(); o.stop(this.ctx.currentTime + 0.5);
     },
 
-    /** Tick de contagem */
     tick() {
         if (!this.ativo || !this.ctx) return;
         const o = this.ctx.createOscillator();
@@ -703,8 +710,14 @@ const som = {
         g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
         o.connect(g); g.connect(this.ctx.destination);
         o.start(); o.stop(this.ctx.currentTime + 0.06);
-    },
+    }
 };
+
+// Desbloquear áudio no primeiro toque (iOS)
+document.addEventListener('touchstart', function ativarAudio() {
+    som.inicializar();
+    document.removeEventListener('touchstart', ativarAudio);
+});
 
 // ================================================================
 //  EFEITOS VISUAIS
@@ -1049,7 +1062,11 @@ const jogo = {
         som.risada();
 
         // Vibrar forte
-        if (navigator.vibrate) navigator.vibrate(600);
+        if (navigator.vibrate) {
+          navigator.vibrate(600);
+        } else {
+          criarFlash('flash-branco');
+        }
 
         // Eliminar os outros
         ids.forEach(id => {
@@ -1108,7 +1125,11 @@ const jogo = {
         criarFlash('flash-vermelho');
         som.erro();
 
-        if (navigator.vibrate) navigator.vibrate([200, 80, 200]);
+        if (navigator.vibrate) {
+          navigator.vibrate([200, 80, 200]);
+        } else {
+          criarFlash('flash-vermelho');
+        }
 
         // Textos de erro
         DOM.textoErro.textContent = this.t().arregou;
