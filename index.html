@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Paga a Conta Aí 🍻</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+
+body {
+    overflow: hidden;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #07070f;
+    color: white;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ===== PARTÍCULAS FUNDO ===== */
+#fundoParticulas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+}
+.particula {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,0.035);
+    animation: flutuar linear infinite;
+}
+@keyframes flutuar {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 1; }  90% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ===== TELAS ===== */
+.tela {
+    display: none; width: 100vw; height: 100vh;
+    position: absolute; top: 0; left: 0;
+    justify-content: center; align-items: center;
+    flex-direction: column; text-align: center;
+    z-index: 10; padding: 20px;
+}
+.tela.visivel { display: flex; }
+
+/* ===== TELA INICIAL ===== */
+#telaInicial { background: radial-gradient(ellipse at 50% 40%, #151535 0%, #07070f 70%); }
+
+.logo-container { margin-bottom: 10px; }
+
+.logo-emoji {
+    font-size: clamp(50px, 14vw, 100px);
+    animation: logoFloat 3s ease-in-out infinite;
+    display: inline-block;
+}
+@keyframes logoFloat {
+    0%,100% { transform: translateY(0) rotate(-3deg); }
+    50%     { transform: translateY(-12px) rotate(3deg); }
+}
+
+#telaInicial h1 {
+    font-size: clamp(26px, 7.5vw, 56px);
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, #f5af19, #f12711, #ff00cc, #6633ff);
+    background-size: 300% 300%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradiente 4s ease infinite;
+}
+@keyframes gradiente {
+    0%  { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100%{ background-position: 0% 50%; }
+}
+
+.subtitulo {
+    font-size: clamp(13px, 3vw, 19px);
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 30px; letter-spacing: 2px;
+}
+
+.instrucoes {
+    max-width: 380px; margin-bottom: 28px; padding: 18px 22px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.instrucoes p {
+    font-size: 14px; color: rgba(255,255,255,0.65);
+    line-height: 2.1; text-align: left;
+}
+
+/* Config toggle */
+.config-row {
+    display: flex; justify-content: center; gap: 20px;
+    margin-bottom: 24px;
+}
+.config-btn {
+    padding: 8px 18px; font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 30px; cursor: pointer;
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6);
+    transition: all 0.3s;
+}
+.config-btn.ativo {
+    border-color: #f5af19;
+    color: #f5af19;
+    background: rgba(245,175,25,0.1);
+}
+
+/* ===== BOTÕES ===== */
+.botao-principal {
+    padding: 18px 50px;
+    font-size: clamp(16px, 4vw, 22px);
+    font-weight: bold; border: none;
+    border-radius: 50px; cursor: pointer;
+    background: linear-gradient(135deg, #f5af19, #f12711);
+    color: white; letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 30px rgba(241,39,17,0.35);
+    transition: transform 0.2s;
+}
+.botao-principal:active { transform: scale(0.95); }
+
+.botao-principal::after {
+    content: ''; position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.13) 50%, transparent 60%);
+    animation: brilho 3s infinite;
+}
+@keyframes brilho {
+    0%   { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.botao-secundario {
+    padding: 12px 36px; font-size: 15px;
+    font-weight: bold;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 50px; cursor: pointer;
+    background: transparent; color: white;
+    transition: all 0.3s; margin-top: 8px;
+}
+
+/* ===== ÁREA DE TOQUE ===== */
+#areaDeToque {
+    position: relative; width: 100%; height: 100%;
+    touch-action: none;
+    background: radial-gradient(circle at center, #0e0e2a, #07070f);
+    overflow: hidden;
+}
+
+/* Linhas neon decorativas */
+#areaDeToque::before, #areaDeToque::after {
+    content: ''; position: absolute; pointer-events: none;
+    border-radius: 50%; opacity: 0.04;
+}
+#areaDeToque::before {
+    width: 600px; height: 600px;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    border: 1px solid #6633ff;
+}
+#areaDeToque::after {
+    width: 400px; height: 400px;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    border: 1px solid #ff00cc;
+}
+
+.mensagem-toque {
+    position: absolute; top: 28px; width: 100%;
+    font-size: clamp(15px, 3.8vw, 22px);
+    color: rgba(255,255,255,0.55);
+    z-index: 20; pointer-events: none;
+    transition: all 0.4s;
+}
+
+.contador-jogadores {
+    position: absolute; bottom: 28px; width: 100%;
+    font-size: clamp(40px, 10vw, 80px);
+    font-weight: bold;
+    color: rgba(255,255,255,0.06);
+    z-index: 20; pointer-events: none;
+}
+
+/* ===== BARRA DE PROGRESSO ===== */
+.barra-container {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: rgba(255,255,255,0.08);
+    z-index: 30; pointer-events: none;
+    opacity: 0; transition: opacity 0.3s;
+}
+.barra-container.ativa { opacity: 1; }
+
+.barra-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #00ff88, #ffcc00, #ff3366);
+    border-radius: 0 3px 3px 0;
+    transition: width 0.08s linear;
+}
+
+/* ===== BOLINHAS ===== */
+.bolinha {
+    position: absolute;
+    width: 105px; height: 105px;
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: bold;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    pointer-events: none;
+    border: 2px solid rgba(255,255,255,0.25);
+}
+
+/* Aura / glow externo */
+.bolinha::before {
+    content: ''; position: absolute;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    animation: onda 2s ease-out infinite;
+    opacity: 0.35;
+}
+@keyframes onda {
+    0%   { transform: scale(1);   opacity: 0.35; }
+    100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* Segundo anel mais lento */
+.bolinha::after {
+    content: ''; position: absolute;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    animation: onda 2s 0.6s ease-out infinite;
+    opacity: 0.2;
+}
+
+.bolinha-entrar {
+    animation: entrar 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes entrar {
+    0%   { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+    100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+}
+
+.bolinha-pulsar {
+    animation: pulsar 1.3s ease-in-out infinite;
+}
+@keyframes pulsar {
+    0%   { transform: translate(-50%,-50%) scale(1);    box-shadow: 0 0 25px currentColor; }
+    50%  { transform: translate(-50%,-50%) scale(1.10); box-shadow: 0 0 55px currentColor; }
+    100% { transform: translate(-50%,-50%) scale(1);    box-shadow: 0 0 25px currentColor; }
+}
+
+/* Suspense — micro vibração + pulsação forte */
+.bolinha-suspense {
+    animation: suspense 0.25s ease-in-out infinite alternate !important;
+}
+.bolinha-suspense::before, .bolinha-suspense::after { animation: none; opacity: 0; }
+
+@keyframes suspense {
+    0%   { transform: translate(-50%,-50%) scale(1)    translateX(-2px); opacity: 1;   box-shadow: 0 0 30px currentColor; }
+    100% { transform: translate(-50%,-50%) scale(1.08) translateX(2px);  opacity: 0.45; box-shadow: 0 0 80px currentColor; }
+}
+
+.bolinha-vencedora {
+    animation: vencedorZoom 1.6s ease forwards !important;
+    z-index: 100;
+}
+.bolinha-vencedora::before, .bolinha-vencedora::after { animation: none; opacity: 0; }
+
+@keyframes vencedorZoom {
+    0%   { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+    40%  { transform: translate(-50%,-50%) scale(3.5); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(5.5); opacity: 0; }
+}
+
+.bolinha-eliminada {
+    animation: eliminar 0.5s ease forwards !important;
+}
+.bolinha-eliminada::before, .bolinha-eliminada::after { animation: none; opacity: 0; }
+
+@keyframes eliminar {
+    0%   { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(0); opacity: 0; }
+}
+
+/* ===== RESULTADO ===== */
+#telaResultado { background: radial-gradient(circle at center, #1a1a3e, #07070f); }
+
+.resultado-container { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+.emoji-resultado {
+    font-size: clamp(50px, 14vw, 110px);
+    animation: quicar 0.6s ease infinite alternate;
+}
+@keyframes quicar {
+    0%   { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-18px) scale(1.1); }
+}
+
+.texto-resultado {
+    font-size: clamp(22px, 7vw, 52px);
+    font-weight: bold;
+    background: linear-gradient(135deg, #ffd700, #ff8c00, #ff3366);
+    background-size: 200% 200%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradiente 3s ease infinite;
+}
+
+.bolinha-resultado {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    box-shadow: 0 0 40px var(--cor), 0 0 80px var(--cor);
+    border: 3px solid rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: bold;
+    animation: pulsarRes 1.5s ease infinite;
+}
+@keyframes pulsarRes {
+    0%   { transform: scale(1);    box-shadow: 0 0 40px var(--cor); }
+    50%  { transform: scale(1.13); box-shadow: 0 0 80px var(--cor); }
+    100% { transform: scale(1);    box-shadow: 0 0 40px var(--cor); }
+}
+
+.frase { font-size: clamp(13px, 2.8vw, 16px); color: rgba(255,255,255,0.4); font-style: italic; max-width: 320px; }
+
+/* Animação dinheiro voando */
+.dinheiro-voando {
+    position: fixed; z-index: 1000;
+    pointer-events: none;
+    font-size: 32px;
+    animation: dinheiroCair linear forwards;
+}
+@keyframes dinheiroCair {
+    0%   { transform: translateY(0) rotate(0deg) scale(1);   opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(900deg) scale(0.5); opacity: 0; }
+}
+
+/* Carteira voando */
+.carteira-voando {
+    position: fixed; z-index: 999;
+    pointer-events: none;
+    font-size: 50px;
+    animation: carteiraFly 2.5s ease-in-out forwards;
+}
+@keyframes carteiraFly {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1);   opacity: 1; }
+    30%  { transform: translate(30vw, -20vh) rotate(-30deg) scale(1.3); opacity: 1; }
+    60%  { transform: translate(-20vw, -40vh) rotate(20deg) scale(0.9); opacity: 0.8; }
+    100% { transform: translate(50vw, -60vh) rotate(-45deg) scale(0.4); opacity: 0; }
+}
+
+/* ===== CONFETES ===== */
+.confete {
+    position: fixed; top: -30px;
+    z-index: 1001; pointer-events: none;
+    animation: cair linear forwards;
+}
+@keyframes cair {
+    0%   { transform: translateY(0) rotate(0deg) translateX(0);      opacity: 1; }
+    50%  { transform: translateY(50vh) rotate(540deg) translateX(30px); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(1080deg) translateX(-20px); opacity: 0; }
+}
+
+/* ===== ERRO ===== */
+#telaErro { background: radial-gradient(circle at center, #2a0a0a, #07070f); }
+
+.erro-container { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+.emoji-erro {
+    font-size: clamp(50px, 14vw, 100px);
+    animation: balancar 0.4s ease infinite alternate;
+}
+@keyframes balancar { 0% { transform: rotate(-12deg); } 100% { transform: rotate(12deg); } }
+
+.texto-erro { font-size: clamp(20px, 6vw, 38px); font-weight: bold; color: #ff4444; }
+.subtexto-erro { font-size: clamp(13px, 2.8vw, 16px); color: rgba(255,255,255,0.4); max-width: 320px; }
+
+/* ===== FLASHES ===== */
+.flash-branco {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 50; pointer-events: none;
+    animation: fB 0.5s ease forwards;
+}
+@keyframes fB { 0% { background: rgba(255,255,255,0.85); } 100% { background: transparent; } }
+
+.flash-vermelho {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 50; pointer-events: none;
+    animation: fV 0.6s ease forwards;
+}
+@keyframes fV { 0% { background: rgba(255,0,0,0.45); } 100% { background: transparent; } }
+
+/* ===== NÚMERO CENTRAL (contagem) ===== */
+.numero-central {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: clamp(80px, 25vw, 200px);
+    font-weight: bold;
+    color: rgba(255,255,255,0.10);
+    z-index: 25; pointer-events: none;
+    animation: numAparece 0.7s ease forwards;
+}
+@keyframes numAparece {
+    0%   { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+    100% { transform: translate(-50%,-50%) scale(1); opacity: 0.10; }
+}
+
+/* ===== OCULTAR ÁUDIO ELEMENTS ===== */
+audio { display: none; }
+</style>
+</head>
+<body>
+
+<div id="fundoParticulas"></div>
+
+<!-- =========== TELA 1 — INÍCIO =========== -->
+<div id="telaInicial" class="tela visivel">
+    <div class="logo-container"><span class="logo-emoji">🍻</span></div>
+    <h1>PAGA A CONTA AÍ</h1>
+    <p class="subtitulo">Quem vai pagar a próxima rodada?</p>
+
+    <div class="instrucoes">
+        <p>👆 Cada jogador coloca o dedo na tela</p>
+        <p>⏳ Aguardem o suspense crescer...</p>
+        <p>🎯 Não tire o dedo! Quem sair perde</p>
+        <p>💸 O sorteado paga a conta!</p>
+    </div>
+
+    <!-- Configurações rápidas -->
+    <div class="config-row">
+        <button class="config-btn ativo" id="btnSom" onclick="jogo.alternarSom()">🔊 Som</button>
+        <button class="config-btn" id="btnIdioma" onclick="jogo.alternarIdioma()">🇧🇷 PT</button>
+    </div>
+
+    <button class="botao-principal" onclick="jogo.iniciarRodada()">🎲 INICIAR RODADA</button>
+</div>
+
+<!-- =========== TELA 2 — MULTI-TOUCH =========== -->
+<div id="telaToques" class="tela">
+    <div id="areaDeToque">
+        <div class="barra-container" id="barraContainer">
+            <div class="barra-fill" id="barraFill"></div>
+        </div>
+        <h2 class="mensagem-toque" id="mensagemToque">👆 Coloquem os dedos na tela</h2>
+        <div class="contador-jogadores" id="contadorJogadores">0</div>
+    </div>
+</div>
+
+<!-- =========== TELA 3 — RESULTADO =========== -->
+<div id="telaResultado" class="tela">
+    <div class="resultado-container">
+        <div class="emoji-resultado" id="emojiResultado">🍻</div>
+        <div class="texto-resultado" id="textoResultado">PAGA A CONTA AÍ!</div>
+        <div class="bolinha-resultado" id="bolinhaResultado"></div>
+        <p class="frase" id="fraseMotivacional"></p>
+        <button class="botao-principal" onclick="jogo.reiniciar()">🔄 NOVA RODADA</button>
+        <button class="botao-secundario" onclick="jogo.voltarInicio()">🏠 INÍCIO</button>
+    </div>
+</div>
+
+<!-- =========== TELA ERRO =========== -->
+<div id="telaErro" class="tela">
+    <div class="erro-container">
+        <div class="emoji-erro">🐔</div>
+        <div class="texto-erro" id="textoErro">ALGUÉM ARREGOU!</div>
+        <p class="subtexto-erro" id="subtextoErro">Todos precisam manter o dedo na tela até o sorteio. Sem medo!</p>
+        <button class="botao-principal" onclick="jogo.reiniciar()">🔄 TENTAR DE NOVO</button>
+        <button class="botao-secundario" onclick="jogo.voltarInicio()">🏠 INÍCIO</button>
+    </div>
+</div>
+
+<script>
+// ================================================================
+//  CONFIGURAÇÕES CENTRALIZADAS
+// ================================================================
+const CONFIG = {
+    MINIMO_JOGADORES:       2,
+    TEMPO_MINIMO_SUSPENSE:  5000,   // 5s mínimo
+    TEMPO_EXTRA_ALEATORIO:  3000,   // até +3s (total 5–8s)
+    TEMPO_TENSAO_FINAL:     2000,   // fase "quem será?"
+    TEMPO_TRANSICAO:        2000,   // antes de exibir resultado
+    TEMPO_DINHEIRO_VOANDO:  3000,   // duração da chuva
+    TOTAL_CONFETES:         80,
+    TOTAL_DINHEIRO:         25,
+    TOTAL_PARTICULAS:       25,
+
+    CORES: [
+        '#ff3366','#33ccff','#ffcc00','#66ff66',
+        '#ff66ff','#ff8833','#33ffcc','#cc66ff',
+        '#ff5555','#55aaff','#ff1493','#00ff7f',
+    ],
+
+    FRASES_PT: [
+        "A carteira chora, mas a amizade agradece! 😂",
+        "Hoje é você, amanhã... também pode ser! 🤷",
+        "Beber é opcional, pagar não! 🍺",
+        "O destino escolheu… aceite com dignidade! 👑",
+        "Pelo menos a cerveja vai ser boa! 🍻",
+        "Chora no caixa, ri na mesa! 😜",
+        "Generosidade involuntária é a melhor! 💰",
+        "O universo conspira contra seu bolso! 🌌",
+        "Pix, crédito ou sofrimento? 💳",
+        "Você não perdeu, só investiu em amizade! 🥲",
+    ],
+    FRASES_EN: [
+        "Your wallet cries, but friendship thanks you! 😂",
+        "Today it's you, tomorrow... also you! 🤷",
+        "Drinking is optional, paying is not! 🍺",
+        "Destiny has chosen... accept it! 👑",
+        "At least the beer is cold! 🍻",
+        "Cry at the register, laugh at the table! 😜",
+        "Involuntary generosity is the best kind! 💰",
+        "The universe conspires against your wallet! 🌌",
+    ],
+
+    EMOJIS_CONFETE: ['🎉','🎊','💸','🍺','🍻','✨','💰','🪙','⭐','🥳'],
+    EMOJIS_DINHEIRO: ['💸','💵','💴','💶','💷','🪙','💰'],
+
+    TEXTOS: {
+        pt: {
+            colocarDedo:  '👆 Coloquem os dedos na tela',
+            faltam:       (n) => `👆 Faltam ${n} dedo(s)`,
+            preparemSe:   '⏳ Preparem-se...',
+            naoTirem:     '🔥 Não tirem o dedo!',
+            quemSera:     '😱 QUEM SERÁ?!',
+            resultado:    'PAGA A CONTA AÍ!',
+            arregou:      'ALGUÉM ARREGOU!',
+            arregouSub:   'Todos precisam manter o dedo na tela até o sorteio. Sem medo!',
+        },
+        en: {
+            colocarDedo:  '👆 Place your fingers on the screen',
+            faltam:       (n) => `👆 Need ${n} more finger(s)`,
+            preparemSe:   '⏳ Get ready...',
+            naoTirem:     "🔥 Don't lift your finger!",
+            quemSera:     '😱 WHO WILL IT BE?!',
+            resultado:    'YOU PAY THE BILL!',
+            arregou:      'SOMEONE CHICKENED OUT!',
+            arregouSub:   'Everyone must keep their finger on the screen until the draw. No fear!',
+        },
+    },
+};
+
+// ================================================================
+//  REFERÊNCIAS DO DOM
+// ================================================================
+const DOM = {
+    telaInicial:        document.getElementById('telaInicial'),
+    telaToques:         document.getElementById('telaToques'),
+    telaResultado:      document.getElementById('telaResultado'),
+    telaErro:           document.getElementById('telaErro'),
+    areaDeToque:        document.getElementById('areaDeToque'),
+    mensagemToque:      document.getElementById('mensagemToque'),
+    contadorJogadores:  document.getElementById('contadorJogadores'),
+    barraContainer:     document.getElementById('barraContainer'),
+    barraFill:          document.getElementById('barraFill'),
+    bolinhaResultado:   document.getElementById('bolinhaResultado'),
+    fraseMotivacional:  document.getElementById('fraseMotivacional'),
+    emojiResultado:     document.getElementById('emojiResultado'),
+    textoResultado:     document.getElementById('textoResultado'),
+    textoErro:          document.getElementById('textoErro'),
+    subtextoErro:       document.getElementById('subtextoErro'),
+    fundoParticulas:    document.getElementById('fundoParticulas'),
+    btnSom:             document.getElementById('btnSom'),
+    btnIdioma:          document.getElementById('btnIdioma'),
+};
+
+// ================================================================
+//  UTILITÁRIOS
+// =======================
