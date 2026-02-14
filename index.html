@@ -579,4 +579,581 @@ const DOM = {
 
 // ================================================================
 //  UTILITÁRIOS
-// =======================
+// ================================================================
+function aleatorio(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function escolher(lista) {
+    return lista[Math.floor(Math.random() * lista.length)];
+}
+
+function mostrarTela(el) {
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('visivel'));
+    el.classList.add('visivel');
+}
+
+function criarFlash(classe) {
+    const d = document.createElement('div');
+    d.className = classe;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 800);
+}
+
+// ================================================================
+//  SISTEMA DE SOM (Web Audio API — sem arquivos externos)
+// ================================================================
+const som = {
+    ctx: null,
+    ativo: true,
+
+    /** Inicializa o AudioContext (precisa de gesto do usuário) */
+    inicializar() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+    },
+
+    /** Som curto de "pop" ao colocar dedo */
+    pop() {
+        if (!this.ativo || !this.ctx) return;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(900, this.ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.1);
+        g.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(); o.stop(this.ctx.currentTime + 0.15);
+    },
+
+    /** Efeito de tensão crescente */
+    tensao(duracao) {
+        if (!this.ativo || !this.ctx) return;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(80, this.ctx.currentTime);
+        o.frequency.linearRampToValueAtTime(400, this.ctx.currentTime + duracao / 1000);
+        g.gain.setValueAtTime(0.0, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + duracao / 1000);
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duracao / 1000 + 0.1);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(); o.stop(this.ctx.currentTime + duracao / 1000 + 0.2);
+    },
+
+    /** "Tcharam!" — fanfarra de resultado */
+    fanfarra() {
+        if (!this.ativo || !this.ctx) return;
+        const notas = [523, 659, 784, 1047]; // C5 E5 G5 C6
+        notas.forEach((freq, i) => {
+            const o = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            o.type = 'square';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.18, this.ctx.currentTime + i * 0.15);
+            g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.15 + 0.5);
+            o.connect(g); g.connect(this.ctx.destination);
+            o.start(this.ctx.currentTime + i * 0.15);
+            o.stop(this.ctx.currentTime + i * 0.15 + 0.5);
+        });
+    },
+
+    /** Risada zoeira (buzzy descending) */
+    risada() {
+        if (!this.ativo || !this.ctx) return;
+        for (let i = 0; i < 6; i++) {
+            const o = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            o.type = 'triangle';
+            const t = this.ctx.currentTime + 0.6 + i * 0.12;
+            o.frequency.setValueAtTime(600 - i * 60, t);
+            o.frequency.exponentialRampToValueAtTime(200, t + 0.1);
+            g.gain.setValueAtTime(0.12, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+            o.connect(g); g.connect(this.ctx.destination);
+            o.start(t); o.stop(t + 0.12);
+        }
+    },
+
+    /** Som de erro */
+    erro() {
+        if (!this.ativo || !this.ctx) return;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(300, this.ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.4);
+        g.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(); o.stop(this.ctx.currentTime + 0.5);
+    },
+
+    /** Tick de contagem */
+    tick() {
+        if (!this.ativo || !this.ctx) return;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = 1200;
+        g.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+        o.connect(g); g.connect(this.ctx.destination);
+        o.start(); o.stop(this.ctx.currentTime + 0.06);
+    },
+};
+
+// ================================================================
+//  EFEITOS VISUAIS
+// ================================================================
+const efeitos = {
+    criarParticulasFundo() {
+        DOM.fundoParticulas.innerHTML = '';
+        for (let i = 0; i < CONFIG.TOTAL_PARTICULAS; i++) {
+            const p = document.createElement('div');
+            p.className = 'particula';
+            const t = aleatorio(4, 18);
+            p.style.width = t + 'px';
+            p.style.height = t + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = aleatorio(10, 22) + 's';
+            p.style.animationDelay = Math.random() * 12 + 's';
+            DOM.fundoParticulas.appendChild(p);
+        }
+    },
+
+    lancarConfetes() {
+        for (let i = 0; i < CONFIG.TOTAL_CONFETES; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'confete';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+
+                if (Math.random() > 0.5) {
+                    c.textContent = escolher(CONFIG.EMOJIS_CONFETE);
+                    c.style.fontSize = aleatorio(16, 28) + 'px';
+                } else {
+                    const s = aleatorio(6, 12);
+                    c.style.width = s + 'px';
+                    c.style.height = s + 'px';
+                    c.style.background = escolher(CONFIG.CORES);
+                    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                }
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 5000);
+            }, i * 25);
+        }
+    },
+
+    lancarDinheiroVoando() {
+        for (let i = 0; i < CONFIG.TOTAL_DINHEIRO; i++) {
+            setTimeout(() => {
+                const d = document.createElement('div');
+                d.className = 'dinheiro-voando';
+                d.textContent = escolher(CONFIG.EMOJIS_DINHEIRO);
+                d.style.left = Math.random() * 100 + 'vw';
+                d.style.top = '-40px';
+                d.style.fontSize = aleatorio(24, 42) + 'px';
+                d.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                document.body.appendChild(d);
+                setTimeout(() => d.remove(), 4000);
+            }, i * 80);
+        }
+    },
+
+    lancarCarteirasVoando() {
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const c = document.createElement('div');
+                c.className = 'carteira-voando';
+                c.textContent = '👛';
+                c.style.left = (20 + Math.random() * 60) + 'vw';
+                c.style.bottom = '10vh';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 3000);
+            }, i * 600);
+        }
+    },
+
+    mostrarNumeroCentral(texto) {
+        const anterior = DOM.areaDeToque.querySelector('.numero-central');
+        if (anterior) anterior.remove();
+        const d = document.createElement('div');
+        d.className = 'numero-central';
+        d.textContent = texto;
+        DOM.areaDeToque.appendChild(d);
+        setTimeout(() => d.remove(), 1200);
+    },
+};
+
+// ================================================================
+//  BARRA DE PROGRESSO
+// ================================================================
+const barra = {
+    intervalo: null,
+    inicio: 0,
+    duracao: 0,
+
+    iniciar(ms) {
+        this.inicio = Date.now();
+        this.duracao = ms;
+        DOM.barraContainer.classList.add('ativa');
+        DOM.barraFill.style.width = '0%';
+
+        this.intervalo = setInterval(() => {
+            const pct = Math.min(((Date.now() - this.inicio) / this.duracao) * 100, 100);
+            DOM.barraFill.style.width = pct + '%';
+            if (pct >= 100) this.parar();
+        }, 50);
+    },
+
+    parar()  { clearInterval(this.intervalo); this.intervalo = null; },
+
+    resetar() {
+        this.parar();
+        DOM.barraContainer.classList.remove('ativa');
+        DOM.barraFill.style.width = '0%';
+    },
+};
+
+// ================================================================
+//  JOGO PRINCIPAL
+// ================================================================
+const jogo = {
+    // ----- Estado -----
+    jogadores: {},            // { touchId: { bolinha, cor, numero } }
+    contagemIniciada: false,
+    rodadaFinalizada: false,
+    timerSorteio: null,
+    timerTensao: null,
+    proximoNumero: 0,
+    somAtivo: true,
+    idioma: 'pt',              // 'pt' ou 'en'
+
+    /** Textos do idioma atual */
+    t() { return CONFIG.TEXTOS[this.idioma]; },
+
+    /** Frases do idioma atual */
+    frases() { return this.idioma === 'pt' ? CONFIG.FRASES_PT : CONFIG.FRASES_EN; },
+
+    // ----- ALTERNAR SOM -----
+    alternarSom() {
+        this.somAtivo = !this.somAtivo;
+        som.ativo = this.somAtivo;
+        DOM.btnSom.textContent = this.somAtivo ? '🔊 Som' : '🔇 Mudo';
+        DOM.btnSom.classList.toggle('ativo', this.somAtivo);
+    },
+
+    // ----- ALTERNAR IDIOMA -----
+    alternarIdioma() {
+        this.idioma = this.idioma === 'pt' ? 'en' : 'pt';
+        DOM.btnIdioma.textContent = this.idioma === 'pt' ? '🇧🇷 PT' : '🇺🇸 EN';
+    },
+
+    // ----- INICIAR RODADA -----
+    iniciarRodada() {
+        som.inicializar();
+        this.limparEstado();
+        mostrarTela(DOM.telaToques);
+        DOM.mensagemToque.textContent = this.t().colocarDedo;
+        DOM.contadorJogadores.textContent = '0';
+    },
+
+    // ----- REINICIAR -----
+    reiniciar() {
+        som.inicializar();
+        this.limparEstado();
+        mostrarTela(DOM.telaToques);
+        DOM.mensagemToque.textContent = this.t().colocarDedo;
+        DOM.contadorJogadores.textContent = '0';
+    },
+
+    // ----- VOLTAR INÍCIO -----
+    voltarInicio() {
+        this.limparEstado();
+        mostrarTela(DOM.telaInicial);
+    },
+
+    // ----- LIMPAR ESTADO -----
+    limparEstado() {
+        clearTimeout(this.timerSorteio);
+        clearTimeout(this.timerTensao);
+        barra.resetar();
+
+        Object.values(this.jogadores).forEach(j => j.bolinha.remove());
+        this.jogadores = {};
+
+        DOM.areaDeToque.querySelectorAll('.numero-central').forEach(n => n.remove());
+
+        // Limpar efeitos residuais
+        document.querySelectorAll('.confete, .dinheiro-voando, .carteira-voando').forEach(e => e.remove());
+
+        this.contagemIniciada = false;
+        this.rodadaFinalizada = false;
+        this.proximoNumero = 0;
+    },
+
+    // ----- TOTAL JOGADORES -----
+    totalJogadores() {
+        return Object.keys(this.jogadores).length;
+    },
+
+    // ----- ATUALIZAR UI -----
+    atualizarUI() {
+        const total = this.totalJogadores();
+        DOM.contadorJogadores.textContent = total;
+
+        if (total < CONFIG.MINIMO_JOGADORES) {
+            DOM.mensagemToque.textContent = this.t().faltam(CONFIG.MINIMO_JOGADORES - total);
+        } else if (!this.contagemIniciada) {
+            DOM.mensagemToque.textContent = this.t().preparemSe;
+        } else {
+            DOM.mensagemToque.textContent = this.t().naoTirem;
+        }
+    },
+
+    // ----- ADICIONAR JOGADOR -----
+    adicionarJogador(toque) {
+        if (this.rodadaFinalizada) return;
+
+        this.proximoNumero++;
+        const numero = this.proximoNumero;
+        const cor = CONFIG.CORES[(numero - 1) % CONFIG.CORES.length];
+
+        // Criar bolinha
+        const bolinha = document.createElement('div');
+        bolinha.className = 'bolinha bolinha-entrar';
+        bolinha.style.background = cor;
+        bolinha.style.color = cor;
+        bolinha.style.boxShadow = `0 0 30px ${cor}, inset 0 0 20px rgba(255,255,255,0.15)`;
+        bolinha.style.left = toque.clientX + 'px';
+        bolinha.style.top = toque.clientY + 'px';
+        bolinha.textContent = numero;
+
+        // Após entrada → pulsar
+        bolinha.addEventListener('animationend', function handler() {
+            bolinha.classList.remove('bolinha-entrar');
+            bolinha.classList.add('bolinha-pulsar');
+            bolinha.removeEventListener('animationend', handler);
+        });
+
+        DOM.areaDeToque.appendChild(bolinha);
+
+        this.jogadores[toque.identifier] = { bolinha, cor, numero };
+
+        // Som de pop
+        som.pop();
+
+        this.atualizarUI();
+
+        // Iniciar contagem se atingiu mínimo
+        if (this.totalJogadores() >= CONFIG.MINIMO_JOGADORES && !this.contagemIniciada) {
+            this.iniciarContagem();
+        }
+    },
+
+    // ----- MOVER JOGADOR -----
+    moverJogador(toque) {
+        const j = this.jogadores[toque.identifier];
+        if (j) {
+            j.bolinha.style.left = toque.clientX + 'px';
+            j.bolinha.style.top = toque.clientY + 'px';
+        }
+    },
+
+    // ----- REMOVER JOGADOR -----
+    removerJogador(toque) {
+        const j = this.jogadores[toque.identifier];
+        if (!j) return;
+        j.bolinha.remove();
+        delete this.jogadores[toque.identifier];
+        this.atualizarUI();
+
+        if (!this.rodadaFinalizada && this.contagemIniciada && this.totalJogadores() < CONFIG.MINIMO_JOGADORES) {
+            this.cancelarRodada();
+        }
+    },
+
+    // ----- INICIAR CONTAGEM -----
+    iniciarContagem() {
+        this.contagemIniciada = true;
+        this.atualizarUI();
+
+        const tempoSuspense = CONFIG.TEMPO_MINIMO_SUSPENSE + Math.random() * CONFIG.TEMPO_EXTRA_ALEATORIO;
+        barra.iniciar(tempoSuspense);
+
+        // Som de tensão crescente
+        som.tensao(tempoSuspense);
+
+        // Mostrar contagem visual (números grandes)
+        const segundos = Math.ceil(tempoSuspense / 1000);
+        for (let i = segundos; i >= 1; i--) {
+            const atraso = (segundos - i) * 1000;
+            setTimeout(() => {
+                if (!this.rodadaFinalizada && this.contagemIniciada) {
+                    efeitos.mostrarNumeroCentral(i);
+                    som.tick();
+                }
+            }, atraso);
+        }
+
+        this.timerSorteio = setTimeout(() => this.faseTensaoFinal(), tempoSuspense);
+    },
+
+    // ----- FASE DE TENSÃO FINAL (micro vibrações, piscar) -----
+    faseTensaoFinal() {
+        if (this.rodadaFinalizada) return;
+
+        DOM.mensagemToque.textContent = this.t().quemSera;
+        efeitos.mostrarNumeroCentral('?');
+
+        // Todas as bolinhas entram em modo suspense
+        Object.values(this.jogadores).forEach(j => {
+            j.bolinha.classList.remove('bolinha-pulsar');
+            j.bolinha.classList.add('bolinha-suspense');
+        });
+
+        // Vibrar dispositivo
+        if (navigator.vibrate) navigator.vibrate([80, 40, 80, 40, 80, 40, 150]);
+
+        this.timerTensao = setTimeout(() => this.sortearPagador(), CONFIG.TEMPO_TENSAO_FINAL);
+    },
+
+    // ----- SORTEAR PAGADOR -----
+    sortearPagador() {
+        if (this.rodadaFinalizada) return;
+
+        this.rodadaFinalizada = true;
+        this.contagemIniciada = false;
+        barra.parar();
+
+        const ids = Object.keys(this.jogadores);
+        if (ids.length < CONFIG.MINIMO_JOGADORES) {
+            this.cancelarRodada();
+            return;
+        }
+
+        // Escolher aleatório
+        const idSorteado = escolher(ids);
+        const pagador = this.jogadores[idSorteado];
+
+        // Flash branco dramático
+        criarFlash('flash-branco');
+
+        // Fanfarra + risada
+        som.fanfarra();
+        som.risada();
+
+        // Vibrar forte
+        if (navigator.vibrate) navigator.vibrate(600);
+
+        // Eliminar os outros
+        ids.forEach(id => {
+            if (id !== idSorteado) {
+                const j = this.jogadores[id];
+                j.bolinha.classList.remove('bolinha-suspense');
+                j.bolinha.classList.add('bolinha-eliminada');
+            }
+        });
+
+        // Zoom no vencedor
+        pagador.bolinha.classList.remove('bolinha-suspense');
+        pagador.bolinha.classList.add('bolinha-vencedora');
+
+        // Transição para resultado
+        setTimeout(() => this.mostrarResultado(pagador), CONFIG.TEMPO_TRANSICAO);
+    },
+
+    // ----- MOSTRAR RESULTADO -----
+    mostrarResultado(pagador) {
+        // Configurar bolinha de resultado
+        DOM.bolinhaResultado.style.background = pagador.cor;
+        DOM.bolinhaResultado.style.setProperty('--cor', pagador.cor);
+        DOM.bolinhaResultado.textContent = pagador.numero;
+
+        // Texto de resultado
+        DOM.textoResultado.textContent = this.t().resultado;
+
+        // Frase motivacional
+        DOM.fraseMotivacional.textContent = escolher(this.frases());
+
+        mostrarTela(DOM.telaResultado);
+
+        // Efeitos visuais contínuos de 2-3s
+        efeitos.lancarConfetes();
+        efeitos.lancarDinheiroVoando();
+        efeitos.lancarCarteirasVoando();
+
+        // Segunda onda de confetes
+        setTimeout(() => efeitos.lancarConfetes(), 1500);
+
+        // Limpar bolinhas
+        Object.values(this.jogadores).forEach(j => j.bolinha.remove());
+        this.jogadores = {};
+    },
+
+    // ----- CANCELAR RODADA -----
+    cancelarRodada() {
+        clearTimeout(this.timerSorteio);
+        clearTimeout(this.timerTensao);
+        barra.resetar();
+
+        this.contagemIniciada = false;
+        this.rodadaFinalizada = true;
+
+        criarFlash('flash-vermelho');
+        som.erro();
+
+        if (navigator.vibrate) navigator.vibrate([200, 80, 200]);
+
+        // Textos de erro
+        DOM.textoErro.textContent = this.t().arregou;
+        DOM.subtextoErro.textContent = this.t().arregouSub;
+
+        // Eliminar bolinhas restantes
+        Object.values(this.jogadores).forEach(j => {
+            j.bolinha.classList.remove('bolinha-pulsar', 'bolinha-suspense');
+            j.bolinha.classList.add('bolinha-eliminada');
+        });
+
+        setTimeout(() => {
+            Object.values(this.jogadores).forEach(j => j.bolinha.remove());
+            this.jogadores = {};
+            mostrarTela(DOM.telaErro);
+        }, 600);
+    },
+};
+
+// ================================================================
+//  EVENTOS DE TOQUE
+// ================================================================
+DOM.areaDeToque.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    for (const t of e.changedTouches) jogo.adicionarJogador(t);
+}, { passive: false });
+
+DOM.areaDeToque.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    for (const t of e.changedTouches) jogo.moverJogador(t);
+}, { passive: false });
+
+DOM.areaDeToque.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    for (const t of e.changedTouches) jogo.removerJogador(t);
+}, { passive: false });
+
+DOM.areaDeToque.addEventListener('touchcancel', (e) => {
+    for (const t of e.changedTouches) jogo.removerJogador(t);
+});
+
+// ================================================================
+//  INICIALIZAÇÃO
+// ================================================================
+efeitos.criarParticulasFundo();
+</script>
+</body>
+</html>
