@@ -604,113 +604,95 @@ function criarFlash(classe) {
 //  SISTEMA DE SOM (Web Audio API — sem arquivos externos)
 // ================================================================
 const som = {
-    ctx: null,
-    ativo: true,
-    desbloqueado: false,
-
-    inicializar() {
-        if (!this.ctx) {
-            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        if (this.ctx.state === 'suspended') {
-            this.ctx.resume();
-        }
-
-        // Hack obrigatório para iOS
-        if (!this.desbloqueado) {
-            const buffer = this.ctx.createBuffer(1, 1, 22050);
-            const source = this.ctx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(this.ctx.destination);
-            source.start(0);
-            this.desbloqueado = true;
-        }
-    },
-
-    pop() {
-        if (!this.ativo || !this.ctx) return;
-        const o = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        o.type = 'sine';
-        o.frequency.setValueAtTime(900, this.ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.1);
-        g.gain.setValueAtTime(0.25, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
-        o.connect(g); g.connect(this.ctx.destination);
-        o.start(); o.stop(this.ctx.currentTime + 0.15);
-    },
-
-    tensao(duracao) {
-        if (!this.ativo || !this.ctx) return;
-        const o = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        o.type = 'sawtooth';
-        o.frequency.setValueAtTime(80, this.ctx.currentTime);
-        o.frequency.linearRampToValueAtTime(400, this.ctx.currentTime + duracao / 1000);
-        g.gain.setValueAtTime(0.0, this.ctx.currentTime);
-        g.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + duracao / 1000);
-        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duracao / 1000 + 0.1);
-        o.connect(g); g.connect(this.ctx.destination);
-        o.start(); o.stop(this.ctx.currentTime + duracao / 1000 + 0.2);
-    },
-
-    fanfarra() {
-        if (!this.ativo || !this.ctx) return;
-        const notas = [523, 659, 784, 1047];
-        notas.forEach((freq, i) => {
-            const o = this.ctx.createOscillator();
-            const g = this.ctx.createGain();
-            o.type = 'square';
-            o.frequency.value = freq;
-            g.gain.setValueAtTime(0.18, this.ctx.currentTime + i * 0.15);
-            g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.15 + 0.5);
-            o.connect(g); g.connect(this.ctx.destination);
-            o.start(this.ctx.currentTime + i * 0.15);
-            o.stop(this.ctx.currentTime + i * 0.15 + 0.5);
-        });
-    },
-
-    risada() {
-        if (!this.ativo || !this.ctx) return;
-        for (let i = 0; i < 6; i++) {
-            const o = this.ctx.createOscillator();
-            const g = this.ctx.createGain();
-            o.type = 'triangle';
-            const t = this.ctx.currentTime + 0.6 + i * 0.12;
-            o.frequency.setValueAtTime(600 - i * 60, t);
-            o.frequency.exponentialRampToValueAtTime(200, t + 0.1);
-            g.gain.setValueAtTime(0.12, t);
-            g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-            o.connect(g); g.connect(this.ctx.destination);
-            o.start(t); o.stop(t + 0.12);
-        }
-    },
-
-    erro() {
-        if (!this.ativo || !this.ctx) return;
-        const o = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        o.type = 'square';
-        o.frequency.setValueAtTime(300, this.ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + 0.4);
-        g.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
-        o.connect(g); g.connect(this.ctx.destination);
-        o.start(); o.stop(this.ctx.currentTime + 0.5);
-    },
-
-    tick() {
-        if (!this.ativo || !this.ctx) return;
-        const o = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        o.type = 'sine';
-        o.frequency.value = 1200;
-        g.gain.setValueAtTime(0.1, this.ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
-        o.connect(g); g.connect(this.ctx.destination);
-        o.start(); o.stop(this.ctx.currentTime + 0.06);
+  ctx: null,
+  ativo: true,
+  
+  inicializar() {
+    // Criar contexto apenas quando usuário clicar
+    if (!this.ctx) {
+      this.ctx = new(window.AudioContext || window.webkitAudioContext)();
     }
+    
+    // Forçar ativação no iOS
+    if (this.ctx.state !== 'running') {
+      this.ctx.resume();
+    }
+  },
+  
+  criarOscilador(tipo, freqInicial, freqFinal, duracao, volume = 0.2) {
+    if (!this.ativo || !this.ctx) return;
+    
+    const agora = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    
+    o.type = tipo;
+    o.frequency.setValueAtTime(freqInicial, agora);
+    
+    if (freqFinal) {
+      o.frequency.exponentialRampToValueAtTime(freqFinal, agora + duracao);
+    }
+    
+    g.gain.setValueAtTime(volume, agora);
+    g.gain.exponentialRampToValueAtTime(0.001, agora + duracao);
+    
+    o.connect(g);
+    g.connect(this.ctx.destination);
+    
+    o.start(agora);
+    o.stop(agora + duracao);
+  },
+  
+  pop() {
+    this.criarOscilador('sine', 900, 400, 0.15, 0.25);
+  },
+  
+  tensao(duracao) {
+    if (!this.ativo || !this.ctx) return;
+    
+    const agora = this.ctx.currentTime;
+    const o = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(80, agora);
+    o.frequency.linearRampToValueAtTime(400, agora + duracao / 1000);
+    
+    g.gain.setValueAtTime(0.0, agora);
+    g.gain.linearRampToValueAtTime(0.15, agora + duracao / 1000);
+    g.gain.exponentialRampToValueAtTime(0.001, agora + duracao / 1000 + 0.1);
+    
+    o.connect(g);
+    g.connect(this.ctx.destination);
+    
+    o.start(agora);
+    o.stop(agora + duracao / 1000 + 0.2);
+  },
+  
+  fanfarra() {
+    const notas = [523, 659, 784, 1047];
+    notas.forEach((freq, i) => {
+      setTimeout(() => {
+        this.criarOscilador('square', freq, null, 0.4, 0.18);
+      }, i * 150);
+    });
+  },
+  
+  risada() {
+    for (let i = 0; i < 6; i++) {
+      setTimeout(() => {
+        this.criarOscilador('triangle', 600 - i * 60, 200, 0.12, 0.12);
+      }, 600 + i * 120);
+    }
+  },
+  
+  erro() {
+    this.criarOscilador('square', 300, 100, 0.5, 0.2);
+  },
+  
+  tick() {
+    this.criarOscilador('sine', 1200, null, 0.06, 0.1);
+  }
 };
 
 // Desbloquear áudio no primeiro toque (iOS)
@@ -1126,10 +1108,10 @@ const jogo = {
         som.erro();
 
         if (navigator.vibrate) {
-          navigator.vibrate([200, 80, 200]);
-        } else {
-          criarFlash('flash-vermelho');
-        }
+        navigator.vibrate([200, 80, 200]);
+      } else {
+        criarFlash('flash-vermelho');
+      }
 
         // Textos de erro
         DOM.textoErro.textContent = this.t().arregou;
