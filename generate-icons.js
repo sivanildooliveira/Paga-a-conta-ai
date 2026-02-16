@@ -22,9 +22,9 @@ try {
 }
 
 const ICON_SIZES = [
-  { size: 180, radius: 26, emoji_size: 90 },
-  { size: 192, radius: 28, emoji_size: 96 },
-  { size: 512, radius: 72, emoji_size: 256 }
+  { size: 180, radius: 26, emojiSize: 90 },
+  { size: 192, radius: 28, emojiSize: 96 },
+  { size: 512, radius: 72, emojiSize: 256 }
 ];
 
 const BACKGROUND_COLOR = '#0a0a2e';
@@ -70,10 +70,10 @@ async function generateAllIcons() {
     fs.mkdirSync(iconsDir, { recursive: true });
   }
 
-  for (const { size, radius, emoji_size } of ICON_SIZES) {
+  for (const { size, radius, emojiSize } of ICON_SIZES) {
     try {
       console.log(`Generating ${size}x${size} PNG icon...`);
-      const canvas = await generateIcon(size, radius, emoji_size);
+      const canvas = await generateIcon(size, radius, emojiSize);
       const buffer = canvas.toBuffer('image/png');
       const filename = path.join(iconsDir, `icon-${size}.png`);
       fs.writeFileSync(filename, buffer);
