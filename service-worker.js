@@ -2,7 +2,7 @@
 //  SERVICE WORKER — Paga a Conta Aí (PWA Offline)
 // ================================================================
 
-const CACHE_NAME = 'paga-a-conta-v1';
+const CACHE_NAME = 'paga-a-conta-v1.0.0';
 
 // Todos os arquivos que devem ser cacheados para uso offline
 const ASSETS_TO_CACHE = [
