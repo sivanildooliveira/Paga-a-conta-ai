@@ -22,8 +22,8 @@ const ASSETS_TO_CACHE = [
   './webfonts/fa-brands-400.ttf',
   './webfonts/fa-v4compatibility.woff2',
   './webfonts/fa-v4compatibility.ttf',
-  './icons/icon-192.svg',
-  './icons/icon-512.svg'
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 // Instalar — cachear todos os assets

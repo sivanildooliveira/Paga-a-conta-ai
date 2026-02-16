@@ -481,8 +481,9 @@ const jogo = {
         bolinha.style.background = cor;
         bolinha.style.color = cor;
         bolinha.style.boxShadow = `0 0 30px ${cor}, inset 0 0 20px rgba(255,255,255,0.15)`;
-        bolinha.style.left = toque.clientX + 'px';
-        bolinha.style.top = toque.clientY + 'px';
+        const rect = DOM.areaDeToque.getBoundingClientRect();
+        bolinha.style.left = (toque.clientX - rect.left) + 'px';
+        bolinha.style.top = (toque.clientY - rect.top) + 'px';
         bolinha.textContent = numero;
 
         // Após entrada → pulsar
@@ -511,8 +512,9 @@ const jogo = {
     moverJogador(toque) {
         const j = this.jogadores[toque.identifier];
         if (j) {
-            j.bolinha.style.left = toque.clientX + 'px';
-            j.bolinha.style.top = toque.clientY + 'px';
+            const rect = DOM.areaDeToque.getBoundingClientRect();
+            j.bolinha.style.left = (toque.clientX - rect.left) + 'px';
+            j.bolinha.style.top = (toque.clientY - rect.top) + 'px';
         }
     },
 

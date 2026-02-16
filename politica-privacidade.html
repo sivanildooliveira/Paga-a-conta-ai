@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidade | Paga a Conta Aí 🍻</title>
+    <link rel="icon" type="image/png+xml" href="icons/icon-192.png">
+    <meta name="theme-color" content="#07070f">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <style>
+        html {
+            display: block;
+            height: auto;
+            overflow-y: auto;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            height: auto;
+            padding-top: 0;
+            justify-content: flex-start;
+            align-items: center;
+            background: radial-gradient(ellipse at 50% 30%, #151535 0%, #07070f 70%);
+        }
+        .politica-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px 20px 0;
+        }
+
+        .politica-header a {
+            color: #f5af19;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity .2s;
+        }
+
+        .politica-header a:hover { opacity: .7; }
+
+        .politica-container {
+            max-width: 720px;
+            width: 100%;
+            margin: 20px auto 40px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 2.5rem 2.5rem 2rem;
+            border-radius: 20px;
+            color: #e0e0e0;
+            backdrop-filter: blur(8px);
+        }
+
+        .politica-container h1 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            margin-bottom: .4rem;
+            background: linear-gradient(135deg, #f5af19, #f12711, #ff00cc);
+            background-size: 300% 300%;
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradiente 4s ease infinite;
+        }
+        @keyframes gradiente {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .politica-container .subtitulo-pp {
+            font-size: .95rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+        }
+        .politica-container h2 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 2rem;
+            margin-bottom: .6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .politica-container h2 i {
+            font-size: 1rem;
+            opacity: .7;
+        }
+        .politica-container p, .politica-container li {
+            font-size: 1rem;
+            margin-bottom: .8rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.7);
+        }
+        .politica-container ul {
+            margin-left: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .politica-container ul li {
+            list-style: none;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+        .politica-container ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #f5af19;
+            font-weight: bold;
+        }
+        .politica-container a {
+            color: #f5af19;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(245,175,25,0.3);
+            transition: border-color .2s;
+        }
+        .politica-container a:hover {
+            border-bottom-color: #f5af19;
+        }
+        .destaque-box {
+            background: rgba(245,175,25,0.06);
+            border-left: 3px solid #f5af19;
+            border-radius: 0 12px 12px 0;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+        .destaque-box p {
+            margin-bottom: 0;
+            color: rgba(255,255,255,0.8);
+        }
+        .data-atualizacao {
+            margin-top: 2.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: .9rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .politica-container { margin: 12px; padding: 1.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header com link de volta -->
+    <div class="politica-header">
+        <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao início</a>
+    </div>
+
+    <div class="politica-container">
+        <h1>🍻 Política de Privacidade</h1>
+        <p class="subtitulo-pp">Paga a Conta Aí — Transparência e respeito à sua privacidade</p>
+
+        <!-- 1 -->
+        <h2><i class="fa-solid fa-shield-halved" style="color:#33ccff"></i> 1. Introdução</h2>
+        <p>Esta Política de Privacidade explica de forma clara como tratamos as informações dos usuários do aplicativo web <strong>Paga a Conta Aí</strong>. Ao acessar ou utilizar o aplicativo, você concorda com os termos aqui descritos.</p>
+
+        <!-- 2 -->
+        <h2><i class="fa-solid fa-database" style="color:#66ff66"></i> 2. Dados que Coletamos</h2>
+        <div class="destaque-box">
+            <p><strong>O Paga a Conta Aí não coleta, armazena ou compartilha dados pessoais dos usuários.</strong> Não exigimos cadastro, login, e-mail ou qualquer informação que identifique você.</p>
+        </div>
+        <p>O aplicativo funciona inteiramente no seu navegador. Todos os dados do jogo (idioma, preferência de som) são armazenados localmente no seu dispositivo e nunca são enviados a servidores externos.</p>
+
+        <!-- 3 -->
+        <h2><i class="fa-solid fa-cookie-bite" style="color:#ffcc00"></i> 3. Cookies e Tecnologias de Terceiros</h2>
+        <p>Utilizamos o <strong>Google AdSense</strong> para exibição de anúncios. Este serviço pode utilizar:</p>
+        <ul>
+            <li>Cookies para personalizar anúncios com base nos seus interesses</li>
+            <li>Web beacons e identificadores de dispositivo</li>
+            <li>Dados não identificáveis como tipo de navegador, sistema operacional e idioma</li>
+        </ul>
+        <p>Você pode gerenciar ou desativar a personalização de anúncios acessando as <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Configurações de Anúncios do Google</a>. Para mais detalhes, consulte a <a href="https://policies.google.com/privacy?hl=pt-BR" target="_blank" rel="noopener">Política de Privacidade do Google</a>.</p>
+
+        <!-- 4 -->
+        <h2><i class="fa-solid fa-wifi" style="color:#33ffcc"></i> 4. Service Worker e Uso Offline</h2>
+        <p>O aplicativo utiliza um <strong>Service Worker</strong> para permitir o funcionamento offline (PWA). Essa tecnologia armazena apenas os arquivos do próprio aplicativo no cache do seu navegador — nenhum dado pessoal é armazenado ou transmitido por esse mecanismo.</p>
+
+        <!-- 5 -->
+        <h2><i class="fa-solid fa-hand-pointer" style="color:#ff66ff"></i> 5. Dados de Toque (Multi-touch)</h2>
+        <p>O jogo utiliza eventos de toque na tela para funcionar. Esses dados são processados exclusivamente em tempo real no seu dispositivo e <strong>não são registrados, armazenados ou compartilhados</strong> de nenhuma forma.</p>
+
+        <!-- 6 -->
+        <h2><i class="fa-solid fa-child" style="color:#ff8833"></i> 6. Menores de Idade</h2>
+        <p>O Paga a Conta Aí não é direcionado a menores de 13 anos. Não coletamos conscientemente informações de crianças. Se você acredita que um menor forneceu dados através de terceiros (como os anúncios), entre em contato conosco.</p>
+
+        <!-- 7 -->
+        <h2><i class="fa-solid fa-user-check" style="color:#55aaff"></i> 7. Seus Direitos</h2>
+        <p>De acordo com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>, você tem direito a:</p>
+        <ul>
+            <li>Saber quais dados são coletados (nenhum, no nosso caso)</li>
+            <li>Solicitar a exclusão de qualquer dado eventualmente armazenado</li>
+            <li>Revogar consentimento para cookies de terceiros a qualquer momento</li>
+            <li>Solicitar informações sobre o tratamento dos seus dados</li>
+        </ul>
+
+        <!-- 8 -->
+        <h2><i class="fa-solid fa-lock" style="color:#ff3366"></i> 8. Segurança</h2>
+        <p>Adotamos boas práticas de segurança para proteger a experiência dos nossos usuários, incluindo uso de HTTPS e ausência de coleta de dados sensíveis. No entanto, nenhum sistema é 100% seguro e não nos responsabilizamos por ações de serviços de terceiros.</p>
+
+        <!-- 9 -->
+        <h2><i class="fa-solid fa-link" style="color:#cc66ff"></i> 9. Links Externos</h2>
+        <p>Os anúncios exibidos podem conter links para sites de terceiros. Não nos responsabilizamos pelas práticas de privacidade desses sites. Recomendamos que leia a política de privacidade de qualquer site que você visite.</p>
+
+        <!-- 10 -->
+        <h2><i class="fa-solid fa-pen-to-square" style="color:#00ff7f"></i> 10. Alterações nesta Política</h2>
+        <p>Podemos atualizar esta política periodicamente para refletir melhorias no aplicativo ou mudanças legais. Alterações significativas serão comunicadas através do próprio aplicativo. Recomendamos revisitar esta página regularmente.</p>
+
+        <!-- 11 -->
+        <h2><i class="fa-solid fa-envelope" style="color:#f5af19"></i> 11. Contato</h2>
+        <p>Em caso de dúvidas, sugestões ou solicitações relacionadas à privacidade, entre em contato:</p>
+        <div class="destaque-box">
+            <p>📧 E-mail: <a href="mailto:sivanildoseguro@outlook.com">sivanildoseguro@outlook.com</a></p>
+        </div>
+
+        <div class="data-atualizacao">
+            Última atualização: 16 de fevereiro de 2026
+        </div>
+    </div>
+
+</body>
+</html>

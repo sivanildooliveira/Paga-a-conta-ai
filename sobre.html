@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre | Paga a Conta Aí 🍻</title>
+    <link rel="icon" type="image/png+xml" href="icons/icon-192.png">
+    <meta name="theme-color" content="#07070f">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/all.min.css">
+    <style>
+        html {
+            display: block;
+            height: auto;
+            overflow-y: auto;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            height: auto;
+            padding-top: 0;
+            justify-content: flex-start;
+            align-items: center;
+            background: radial-gradient(ellipse at 50% 30%, #151535 0%, #07070f 70%);
+        }
+        .sobre-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px 20px 0;
+        }
+        .sobre-header a {
+            color: #f5af19;
+            text-decoration: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: opacity .2s;
+        }
+        .sobre-header a:hover { opacity: .7; }
+
+        .sobre-container {
+            max-width: 720px;
+            width: 100%;
+            margin: 20px auto 40px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 2.5rem 2.5rem 2rem;
+            border-radius: 20px;
+            color: #e0e0e0;
+            backdrop-filter: blur(8px);
+        }
+
+        .sobre-logo {
+            font-size: clamp(60px, 18vw, 90px);
+            text-align: center;
+            animation: logoFloat 3s ease-in-out infinite;
+            display: block;
+        }
+        @keyframes logoFloat {
+            0%,100% { transform: translateY(0) rotate(-3deg); }
+            50%     { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .sobre-container h1 {
+            font-size: clamp(1.6rem, 5vw, 2.2rem);
+            margin-bottom: .4rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f5af19, #f12711, #ff00cc);
+            background-size: 300% 300%;
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradiente 4s ease infinite;
+        }
+        @keyframes gradiente {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sobre-container .subtitulo-sobre {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .sobre-container h2 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 2rem;
+            margin-bottom: .6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sobre-container h2 i {
+            font-size: 1rem;
+            opacity: .7;
+        }
+        .sobre-container p, .sobre-container li {
+            font-size: 1rem;
+            margin-bottom: .8rem;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.7);
+        }
+        .sobre-container ul {
+            margin-left: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .sobre-container ul li {
+            list-style: none;
+            position: relative;
+            padding-left: 1.4rem;
+        }
+        .sobre-container ul li::before {
+            content: attr(data-icon);
+            position: absolute;
+            left: 0;
+        }
+        .sobre-container a {
+            color: #f5af19;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(245,175,25,0.3);
+            transition: border-color .2s;
+        }
+        .sobre-container a:hover {
+            border-bottom-color: #f5af19;
+        }
+
+        .destaque-box {
+            background: rgba(245,175,25,0.06);
+            border-left: 3px solid #f5af19;
+            border-radius: 0 12px 12px 0;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+        .destaque-box p {
+            margin-bottom: 0;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 1rem 0;
+        }
+        .tech-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 1rem;
+            text-align: center;
+            transition: transform .2s, border-color .2s;
+        }
+        .tech-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(245,175,25,0.3);
+        }
+        .tech-card i {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: .5rem;
+        }
+        .tech-card span {
+            font-size: .9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .versao {
+            margin-top: 2.5rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: .9rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        .links-rodape {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .links-rodape a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: .9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color .2s;
+        }
+        .links-rodape a:hover { color: #f5af19; }
+
+        @media (max-width: 600px) {
+            .sobre-container { margin: 12px; padding: 1.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header com link de volta -->
+    <div class="sobre-header">
+        <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao início</a>
+    </div>
+
+    <div class="sobre-container">
+        <span class="sobre-logo">🍻</span>
+        <h1>Paga a Conta Aí</h1>
+        <p class="subtitulo-sobre">O jeito mais divertido de decidir quem paga a conta!</p>
+
+        <!-- O que é -->
+        <h2><i class="fa-solid fa-circle-info" style="color:#33ccff"></i> O que é?</h2>
+        <p><strong>Paga a Conta Aí</strong> é um jogo de sorteio multi-touch feito para resolver aquela dúvida eterna: <em>"quem vai pagar a conta?"</em>. Cada jogador coloca o dedo na tela do celular, o suspense cresce e... um é sorteado para pagar!</p>
+
+        <!-- Como funciona -->
+        <h2><i class="fa-solid fa-gamepad" style="color:#66ff66"></i> Como funciona?</h2>
+        <ul>
+            <li data-icon="👆">Cada jogador coloca o dedo na tela</li>
+            <li data-icon="⏳">Aguardem o suspense crescer...</li>
+            <li data-icon="🎯">Não tire o dedo! Quem sair perde</li>
+            <li data-icon="💰">O sorteado paga a conta!</li>
+        </ul>
+        <div class="destaque-box">
+            <p>É simples, rápido e funciona em qualquer celular — até sem internet! 📱</p>
+        </div>
+
+        <!-- Recursos -->
+        <h2><i class="fa-solid fa-star" style="color:#ffcc00"></i> Recursos</h2>
+        <ul>
+            <li data-icon="🎵">Som e efeitos sonoros para aumentar o suspense</li>
+            <li data-icon="🌐">Disponível em Português e Inglês</li>
+            <li data-icon="📴">Funciona offline (PWA)</li>
+            <li data-icon="🎨">Cores únicas para cada jogador</li>
+            <li data-icon="🎉">Animações de confete e chuva de dinheiro</li>
+            <li data-icon="😂">Frases engraçadas para o sorteado</li>
+            <li data-icon="♾️">Sem limite de jogadores (suporta multi-touch)</li>
+        </ul>
+
+        <!-- Tecnologias -->
+        <h2><i class="fa-solid fa-code" style="color:#ff66ff"></i> Tecnologias</h2>
+        <div class="tech-grid">
+            <div class="tech-card">
+                <i class="fa-brands fa-html5" style="color:#e34f26"></i>
+                <span>HTML5</span>
+            </div>
+            <div class="tech-card">
+                <i class="fa-brands fa-css3-alt" style="color:#1572b6"></i>
+                <span>CSS3</span>
+            </div>
+            <div class="tech-card">
+                <i class="fa-brands fa-js" style="color:#f7df1e"></i>
+                <span>JavaScript</span>
+            </div>
+            <div class="tech-card">
+                <i class="fa-solid fa-mobile-screen-button" style="color:#33ccff"></i>
+                <span>PWA</span>
+            </div>
+            <div class="tech-card">
+                <i class="fa-solid fa-hand-pointer" style="color:#ff66ff"></i>
+                <span>Touch API</span>
+            </div>
+            <div class="tech-card">
+                <i class="fa-solid fa-volume-high" style="color:#66ff66"></i>
+                <span>Web Audio</span>
+            </div>
+        </div>
+
+        <!-- Por que criamos -->
+        <h2><i class="fa-solid fa-heart" style="color:#ff3366"></i> Por que criamos?</h2>
+        <p>Porque toda confraternização precisa daquele momento de suspense! Chega de "par ou ímpar" ou "zerinho ou um" — agora é com estilo, animação e muita risada. 🎉</p>
+        <p>O <strong>Paga a Conta Aí</strong> foi feito com carinho para tornar seus encontros com amigos e família ainda mais divertidos.</p>
+
+        <!-- Gratuito -->
+        <h2><i class="fa-solid fa-gift" style="color:#00ff7f"></i> Gratuito e sem cadastro</h2>
+        <p>O aplicativo é <strong>100% gratuito</strong>, não exige cadastro, login ou qualquer dado pessoal. Basta abrir e jogar!</p>
+        <p>O site pode exibir anúncios para manter o projeto gratuito.</p>
+
+
+        <!-- Versão e links -->
+        <div class="versao">
+            <p>Versão 1.0 · Feito com ❤️ no Brasil</p>
+        </div>
+
+        <div class="links-rodape">
+            <a href="politica-privacidade.html"><i class="fa-solid fa-shield-halved"></i> Política de Privacidade</a>
+            <a href="index.html"><i class="fa-solid fa-play"></i> Jogar agora</a>
+        </div>
+    </div>
+
+</body>
+</html>
