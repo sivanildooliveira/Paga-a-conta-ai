@@ -2,7 +2,7 @@
 //  SERVICE WORKER — Paga a Conta Aí (PWA Offline)
 // ================================================================
 
-const CACHE_NAME = 'paga-a-conta-v1.0.0';
+const CACHE_NAME = 'paga-a-conta-v1.1.0';
 
 // Todos os arquivos que devem ser cacheados para uso offline
 const ASSETS_TO_CACHE = [
@@ -23,7 +23,10 @@ const ASSETS_TO_CACHE = [
   './webfonts/fa-v4compatibility.woff2',
   './webfonts/fa-v4compatibility.ttf',
   './icons/icon-192.svg',
-  './icons/icon-512.svg'
+  './icons/icon-512.svg',
+  './icons/icon-180.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
 ];
 
 // Instalar — cachear todos os assets
