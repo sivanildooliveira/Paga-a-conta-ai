@@ -5,7 +5,7 @@
 //     incremente a versão abaixo para forçar atualização no PWA.
 // ================================================================
 
-const CACHE_VERSION = 'v1.1.1';  // ← INCREMENTE a cada deploy
+const CACHE_VERSION = 'v1.0001';  // ← INCREMENTE a cada deploy
 const CACHE_NAME = `paga-a-conta-${CACHE_VERSION}`;
 
 // Todos os arquivos que devem ser cacheados para uso offline
@@ -21,13 +21,8 @@ const ASSETS_TO_CACHE = [
   './musics/resultado.mp3',
   './css/all.min.css',
   './webfonts/fa-solid-900.woff2',
-  './webfonts/fa-solid-900.ttf',
   './webfonts/fa-regular-400.woff2',
-  './webfonts/fa-regular-400.ttf',
   './webfonts/fa-brands-400.woff2',
-  './webfonts/fa-brands-400.ttf',
-  './webfonts/fa-v4compatibility.woff2',
-  './webfonts/fa-v4compatibility.ttf',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];

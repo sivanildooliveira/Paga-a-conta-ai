@@ -13,19 +13,25 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Paga a Conta Aí">
 <meta name="description" content="Paga a Conta Aí é um jogo divertido multi-touch para decidir quem paga a conta. Funciona offline e é gratuito.">
+<meta name="color-scheme" content="dark">
+
+<!-- Preconnect third-party origins -->
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
+
+<!-- Preload critical fonts -->
+<link rel="preload" href="webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="manifest" href="manifest.json">
 
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/all.min.css">
+<link rel="stylesheet" href="css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="css/all.min.css"></noscript>
 
 <!-- Google AdSense -->
 <meta name="google-adsense-account" content="ca-pub-4761281283170645">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4761281283170645" crossorigin="anonymous">
-</script>
-
-<script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4761281283170645" crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -40,11 +46,8 @@
     <p class="subtitulo" data-lang="pt">Quem vai pagar a próxima rodada?</p>
     <p class="subtitulo" data-lang="en" style="display:none">Who will pay the next round?</p>
 
-    <!-- Anúncio AdSense (banner topo) -->
-    <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-4761281283170645" data-ad-slot="3099207830"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <!-- Anúncio AdSense (banner topo) 
+    <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-4761281283170645" data-ad-slot="3099207830" data-ad-format="auto" data-full-width-responsive="true"></ins>-->
 
     <div class="instrucoes">
         <div data-lang="pt">
@@ -173,16 +176,18 @@
     </div>
 </div>
 
-<script src="scripts/script.js"></script>
+<script src="scripts/script.js" defer></script>
 <script>
-// Registrar Service Worker para funcionar offline
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+// AdSense init
+window.addEventListener('load', () => {
+    try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+    // Registrar Service Worker para funcionar offline
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js')
             .then(reg => console.log('[PWA] Service Worker registrado:', reg.scope))
             .catch(err => console.error('[PWA] Erro ao registrar SW:', err));
-    });
-}
+    }
+});
 </script>
 </body>
 </html>

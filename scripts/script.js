@@ -239,53 +239,70 @@ const som = {
 const efeitos = {
     criarParticulasFundo() {
         DOM.fundoParticulas.innerHTML = '';
+        const frag = document.createDocumentFragment();
         for (let i = 0; i < CONFIG.TOTAL_PARTICULAS; i++) {
             const p = document.createElement('div');
             p.className = 'particula';
             const t = aleatorio(4, 18);
-            p.style.width = t + 'px';
-            p.style.height = t + 'px';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDuration = aleatorio(10, 22) + 's';
-            p.style.animationDelay = Math.random() * 12 + 's';
-            DOM.fundoParticulas.appendChild(p);
+            const s = p.style;
+            s.width = t + 'px';
+            s.height = t + 'px';
+            s.left = Math.random() * 100 + '%';
+            s.animationDuration = aleatorio(10, 22) + 's';
+            s.animationDelay = Math.random() * 12 + 's';
+            frag.appendChild(p);
         }
+        DOM.fundoParticulas.appendChild(frag);
     },
 
     lancarConfetes() {
-        for (let i = 0; i < CONFIG.TOTAL_CONFETES; i++) {
-            setTimeout(() => {
+        const frag = document.createDocumentFragment();
+        const total = CONFIG.TOTAL_CONFETES;
+        const batchSize = 10;
+        let idx = 0;
+
+        function criarLote() {
+            const end = Math.min(idx + batchSize, total);
+            for (let i = idx; i < end; i++) {
                 const c = document.createElement('div');
                 c.className = 'confete';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+                const s = c.style;
+                s.left = Math.random() * 100 + 'vw';
+                s.animationDuration = (2.5 + Math.random() * 2) + 's';
 
                 if (Math.random() > 0.5) {
                     c.textContent = escolher(CONFIG.EMOJIS_CONFETE);
-                    c.style.fontSize = aleatorio(16, 28) + 'px';
+                    s.fontSize = aleatorio(16, 28) + 'px';
                 } else {
-                    const s = aleatorio(6, 12);
-                    c.style.width = s + 'px';
-                    c.style.height = s + 'px';
-                    c.style.background = escolher(CONFIG.CORES);
-                    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    const sz = aleatorio(6, 12);
+                    s.width = sz + 'px';
+                    s.height = sz + 'px';
+                    s.background = escolher(CONFIG.CORES);
+                    s.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
                 }
                 document.body.appendChild(c);
                 setTimeout(() => c.remove(), 5000);
-            }, i * 25);
+            }
+            idx = end;
+            if (idx < total) {
+                requestAnimationFrame(criarLote);
+            }
         }
+        requestAnimationFrame(criarLote);
     },
 
     lancarDinheiroVoando() {
-        for (let i = 0; i < CONFIG.TOTAL_DINHEIRO; i++) {
+        const total = CONFIG.TOTAL_DINHEIRO;
+        for (let i = 0; i < total; i++) {
             setTimeout(() => {
                 const d = document.createElement('div');
                 d.className = 'dinheiro-voando';
                 d.textContent = escolher(CONFIG.EMOJIS_DINHEIRO);
-                d.style.left = Math.random() * 100 + 'vw';
-                d.style.top = '-40px';
-                d.style.fontSize = aleatorio(24, 42) + 'px';
-                d.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                const s = d.style;
+                s.left = Math.random() * 100 + 'vw';
+                s.top = '-40px';
+                s.fontSize = aleatorio(24, 42) + 'px';
+                s.animationDuration = (2 + Math.random() * 1.5) + 's';
                 document.body.appendChild(d);
                 setTimeout(() => d.remove(), 4000);
             }, i * 80);
@@ -298,8 +315,9 @@ const efeitos = {
                 const c = document.createElement('div');
                 c.className = 'carteira-voando';
                 c.textContent = '👛';
-                c.style.left = (20 + Math.random() * 60) + 'vw';
-                c.style.bottom = '10vh';
+                const s = c.style;
+                s.left = (20 + Math.random() * 60) + 'vw';
+                s.bottom = '10vh';
                 document.body.appendChild(c);
                 setTimeout(() => c.remove(), 3000);
             }, i * 600);
@@ -321,24 +339,31 @@ const efeitos = {
 //  BARRA DE PROGRESSO
 // ================================================================
 const barra = {
-    intervalo: null,
+    rafId: null,
     inicio: 0,
     duracao: 0,
 
     iniciar(ms) {
-        this.inicio = Date.now();
+        this.inicio = performance.now();
         this.duracao = ms;
         DOM.barraContainer.classList.add('ativa');
         DOM.barraFill.style.width = '0%';
 
-        this.intervalo = setInterval(() => {
-            const pct = Math.min(((Date.now() - this.inicio) / this.duracao) * 100, 100);
+        const atualizar = (agora) => {
+            const pct = Math.min(((agora - this.inicio) / this.duracao) * 100, 100);
             DOM.barraFill.style.width = pct + '%';
-            if (pct >= 100) this.parar();
-        }, 50);
+            if (pct < 100) {
+                this.rafId = requestAnimationFrame(atualizar);
+            } else {
+                this.parar();
+            }
+        };
+        this.rafId = requestAnimationFrame(atualizar);
     },
 
-    parar()  { clearInterval(this.intervalo); this.intervalo = null; },
+    parar()  { 
+        if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
+    },
 
     resetar() {
         this.parar();
@@ -441,7 +466,7 @@ const jogo = {
         DOM.areaDeToque.querySelectorAll('.numero-central').forEach(n => n.remove());
 
         // Limpar efeitos residuais
-        document.querySelectorAll('.confete, .dinheiro-voando, .carteira-voando').forEach(e => e.remove());
+        document.querySelectorAll('.confete, .dinheiro-voando, .carteira-voando, .flash-branco, .flash-vermelho').forEach(e => e.remove());
 
         this.contagemIniciada = false;
         this.rodadaFinalizada = false;
@@ -696,9 +721,17 @@ DOM.areaDeToque.addEventListener('touchstart', (e) => {
     for (const t of e.changedTouches) jogo.adicionarJogador(t);
 }, { passive: false });
 
+// Throttle touchmove a ~60fps
+let touchMoveRafPending = false;
 DOM.areaDeToque.addEventListener('touchmove', (e) => {
     e.preventDefault();
-    for (const t of e.changedTouches) jogo.moverJogador(t);
+    if (touchMoveRafPending) return;
+    touchMoveRafPending = true;
+    const toques = Array.from(e.changedTouches);
+    requestAnimationFrame(() => {
+        for (const t of toques) jogo.moverJogador(t);
+        touchMoveRafPending = false;
+    });
 }, { passive: false });
 
 DOM.areaDeToque.addEventListener('touchend', (e) => {
@@ -708,7 +741,7 @@ DOM.areaDeToque.addEventListener('touchend', (e) => {
 
 DOM.areaDeToque.addEventListener('touchcancel', (e) => {
     for (const t of e.changedTouches) jogo.removerJogador(t);
-});
+}, { passive: true });
 
 // ================================================================
 //  INICIALIZAÇÃO
