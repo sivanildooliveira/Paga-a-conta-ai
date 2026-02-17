@@ -5,7 +5,7 @@
 //     incremente a versão abaixo para forçar atualização no PWA.
 // ================================================================
 
-const CACHE_VERSION = 'v1.1.0';  // ← INCREMENTE a cada deploy
+const CACHE_VERSION = 'v1.1.1';  // ← INCREMENTE a cada deploy
 const CACHE_NAME = `paga-a-conta-${CACHE_VERSION}`;
 
 // Todos os arquivos que devem ser cacheados para uso offline
