@@ -171,6 +171,126 @@
             color: rgba(255,255,255,0.6);
         }
 
+        /* Steps visuais */
+        .steps-visual {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
+            margin: 1rem 0;
+        }
+        .step-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            position: relative;
+            transition: transform .2s, border-color .2s;
+        }
+        .step-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(245,175,25,0.25);
+        }
+        .step-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5af19, #f12711);
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 800;
+            box-shadow: 0 2px 10px rgba(245,175,25,0.4);
+        }
+        .step-emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: .4rem;
+        }
+        .step-card strong {
+            font-size: .9rem;
+            color: rgba(255,255,255,0.85);
+            display: block;
+            margin-bottom: .3rem;
+        }
+        .step-card p {
+            font-size: .8rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Features grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 1rem 0;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: .8rem;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            transition: border-color .2s;
+        }
+        .feature-item:hover {
+            border-color: rgba(245,175,25,0.2);
+        }
+        .feature-item i {
+            font-size: 1.2rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .feature-item strong {
+            font-size: .88rem;
+            color: rgba(255,255,255,0.85);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .feature-item div p {
+            font-size: .78rem;
+            color: rgba(255,255,255,0.42);
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* FAQ */
+        .faq-item {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: .9rem 1.1rem;
+            margin-bottom: .7rem;
+        }
+        .faq-item strong {
+            font-size: .95rem;
+            color: rgba(255,255,255,0.85);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .faq-item p {
+            font-size: .88rem;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            .sobre-container { margin: 12px; padding: 1.5rem 1.2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps-visual { grid-template-columns: 1fr 1fr; }
+        }
+
         .versao {
             margin-top: 2.5rem;
             padding-top: 1.2rem;
@@ -217,31 +337,113 @@
 
         <!-- O que é -->
         <h2><i class="fa-solid fa-circle-info" style="color:#33ccff"></i> O que é?</h2>
-        <p><strong>Paga a Conta Aí</strong> é um jogo de sorteio multi-touch feito para resolver aquela dúvida eterna: <em>"quem vai pagar a conta?"</em>. Cada jogador coloca o dedo na tela do celular, o suspense cresce e... um é sorteado para pagar!</p>
+        <p><strong>Paga a Conta Aí</strong> é um jogo de sorteio multi-touch criado para acabar com aquela eterna discussão: <em>"quem vai pagar a conta?"</em>. Em vez de par ou ímpar, zerinho ou um, ou aquela discussão sem fim — agora é com suspense, animações e muita risada!</p>
+        <p>Basta abrir no celular, cada um colocar o dedo na tela, e o destino decide quem vai abrir a carteira. Simples, justo e hilário. 🎉</p>
+
+        <!-- Para quem é -->
+        <h2><i class="fa-solid fa-users" style="color:#55aaff"></i> Para quem é?</h2>
+        <div class="destaque-box">
+            <p>Para qualquer grupo de amigos, família ou colegas que queira adicionar uma dose de diversão na hora de dividir (ou não!) a conta.</p>
+        </div>
+        <p>Perfeito para:</p>
+        <ul>
+            <li data-icon="🍺">Happy hours e saídas com amigos</li>
+            <li data-icon="🍖">Churrascos e confraternizações</li>
+            <li data-icon="🍕">Pedidos de delivery em grupo</li>
+            <li data-icon="☕">Cafézinho da tarde no escritório</li>
+            <li data-icon="🎂">Festas e comemorações</li>
+            <li data-icon="🎲">Qualquer decisão que precisar de sorte!</li>
+        </ul>
 
         <!-- Como funciona -->
         <h2><i class="fa-solid fa-gamepad" style="color:#66ff66"></i> Como funciona?</h2>
-        <ul>
-            <li data-icon="👆">Cada jogador coloca o dedo na tela</li>
-            <li data-icon="⏳">Aguardem o suspense crescer...</li>
-            <li data-icon="🎯">Não tire o dedo! Quem sair perde</li>
-            <li data-icon="💰">O sorteado paga a conta!</li>
-        </ul>
-        <div class="destaque-box">
-            <p>É simples, rápido e funciona em qualquer celular — até sem internet! 📱</p>
+        <div class="steps-visual">
+            <div class="step-card">
+                <span class="step-badge">1</span>
+                <span class="step-emoji">👆</span>
+                <strong>Toque na tela</strong>
+                <p>Cada jogador coloca o dedo na tela do celular ao mesmo tempo</p>
+            </div>
+            <div class="step-card">
+                <span class="step-badge">2</span>
+                <span class="step-emoji">⏳</span>
+                <strong>Suspense cresce</strong>
+                <p>A barra de progresso avança enquanto a tensão aumenta...</p>
+            </div>
+            <div class="step-card">
+                <span class="step-badge">3</span>
+                <span class="step-emoji">🔥</span>
+                <strong>Não tire o dedo!</strong>
+                <p>Quem tirar o dedo antes do sorteio é eliminado automaticamente</p>
+            </div>
+            <div class="step-card">
+                <span class="step-badge">4</span>
+                <span class="step-emoji">💸</span>
+                <strong>Sorteio!</strong>
+                <p>O escolhido é revelado com confetes, chuva de dinheiro e frases engraçadas</p>
+            </div>
         </div>
 
         <!-- Recursos -->
         <h2><i class="fa-solid fa-star" style="color:#ffcc00"></i> Recursos</h2>
-        <ul>
-            <li data-icon="🎵">Som e efeitos sonoros para aumentar o suspense</li>
-            <li data-icon="🌐">Disponível em Português e Inglês</li>
-            <li data-icon="📴">Funciona offline (PWA)</li>
-            <li data-icon="🎨">Cores únicas para cada jogador</li>
-            <li data-icon="🎉">Animações de confete e chuva de dinheiro</li>
-            <li data-icon="😂">Frases engraçadas para o sorteado</li>
-            <li data-icon="♾️">Sem limite de jogadores (suporta multi-touch)</li>
-        </ul>
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fa-solid fa-volume-high" style="color:#66ff66"></i>
+                <div>
+                    <strong>Efeitos Sonoros</strong>
+                    <p>Som ambiente, suspense crescente e efeitos de resultado</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-language" style="color:#33ccff"></i>
+                <div>
+                    <strong>Bilíngue</strong>
+                    <p>Disponível em Português e Inglês com troca instantânea</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-wifi-slash" style="color:#ff8833"></i>
+                <div>
+                    <strong>Funciona Offline</strong>
+                    <p>Instale como app (PWA) e use até sem internet</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-palette" style="color:#ff66ff"></i>
+                <div>
+                    <strong>Cores Únicas</strong>
+                    <p>Cada jogador recebe uma bolinha com cor exclusiva</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color:#ffcc00"></i>
+                <div>
+                    <strong>Animações Épicas</strong>
+                    <p>Confetes, chuva de 💸, flash dramático e mais!</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-face-laugh-squint" style="color:#00ff7f"></i>
+                <div>
+                    <strong>Frases Engraçadas</strong>
+                    <p>Mensagens hilariantes para consolar (ou zoar!) o sorteado</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-infinity" style="color:#cc66ff"></i>
+                <div>
+                    <strong>Sem Limite</strong>
+                    <p>Quantos jogadores a tela suportar! Multi-touch total</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-bolt" style="color:#f5af19"></i>
+                <div>
+                    <strong>Super Leve</strong>
+                    <p>Carrega instantaneamente, sem login ou cadastro</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Tecnologias -->
         <h2><i class="fa-solid fa-code" style="color:#ff66ff"></i> Tecnologias</h2>
@@ -274,13 +476,33 @@
 
         <!-- Por que criamos -->
         <h2><i class="fa-solid fa-heart" style="color:#ff3366"></i> Por que criamos?</h2>
-        <p>Porque toda confraternização precisa daquele momento de suspense! Chega de "par ou ímpar" ou "zerinho ou um" — agora é com estilo, animação e muita risada. 🎉</p>
-        <p>O <strong>Paga a Conta Aí</strong> foi feito com carinho para tornar seus encontros com amigos e família ainda mais divertidos.</p>
+        <p>Porque toda confraternização merece aquele momento de suspense e risadas! Estávamos cansados dos mesmos "par ou ímpar" e "zerinho ou um" — queríamos algo com mais emoção, estilo e diversão.</p>
+        <p>O <strong>Paga a Conta Aí</strong> nasceu para transformar um momento chato em uma experiência épica. A ideia é simples: se alguém vai ter que pagar, pelo menos que seja com muita risada, confete e suspense! 🎊</p>
+        <p>Feito com carinho para tornar seus encontros com amigos, família e colegas ainda mais memoráveis.</p>
+
+        <!-- FAQ -->
+        <h2><i class="fa-solid fa-circle-question" style="color:#33ffcc"></i> Perguntas Frequentes</h2>
+        <div class="faq-item">
+            <strong>Precisa instalar alguma coisa?</strong>
+            <p>Não! Funciona direto no navegador. Mas você pode instalar como app pelo menu do navegador para acesso rápido.</p>
+        </div>
+        <div class="faq-item">
+            <strong>Funciona sem internet?</strong>
+            <p>Sim! Depois de acessar uma vez, funciona totalmente offline.</p>
+        </div>
+        <div class="faq-item">
+            <strong>Quantos jogadores podem jogar?</strong>
+            <p>Mínimo 2 jogadores. O máximo depende de quantos toques a tela do seu celular suporta (geralmente 5 a 10).</p>
+        </div>
+        <div class="faq-item">
+            <strong>Os dados são coletados?</strong>
+            <p>Não. Zero dados pessoais. Tudo funciona localmente no seu dispositivo. Veja nossa <a href="politica-privacidade.html">Política de Privacidade</a>.</p>
+        </div>
 
         <!-- Gratuito -->
         <h2><i class="fa-solid fa-gift" style="color:#00ff7f"></i> Gratuito e sem cadastro</h2>
         <p>O aplicativo é <strong>100% gratuito</strong>, não exige cadastro, login ou qualquer dado pessoal. Basta abrir e jogar!</p>
-        <p>O site pode exibir anúncios para manter o projeto gratuito.</p>
+        <p>O site pode exibir anúncios para manter o projeto gratuito e acessível para todos.</p>
 
 
         <!-- Versão e links -->
