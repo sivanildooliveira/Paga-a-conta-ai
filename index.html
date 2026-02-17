@@ -119,16 +119,17 @@
         </div>
     </div>
 
+    <!-- Botão principal -->
+    <button class="botao-principal" data-lang="pt" onclick="jogo.iniciarRodada()"><i class="fa-solid fa-play"></i> INICIAR RODADA</button>
+    <button class="botao-principal" data-lang="en" style="display:none" onclick="jogo.iniciarRodada()"><i class="fa-solid fa-play"></i> START ROUND</button>
+
     <!-- Configurações rápidas -->
-    <div class="config-row">
+    <div class="config-row" style="margin-top: 1rem;">
         <button class="config-btn" id="btnSom" onclick="jogo.alternarSom()"><i class="fa-solid fa-volume-xmark"></i> Mudo</button>
         <button class="config-btn" id="btnIdioma" onclick="jogo.alternarIdioma()">🇧🇷 PT</button>
     </div>
 
-    <button class="botao-principal" data-lang="pt" onclick="jogo.iniciarRodada()"><i class="fa-solid fa-play"></i> INICIAR RODADA</button>
-    <button class="botao-principal" data-lang="en" style="display:none" onclick="jogo.iniciarRodada()"><i class="fa-solid fa-play"></i> START ROUND</button>
-
-    <div style="text-align:center; display:flex; justify-content:center; gap:20px; flex-wrap: wrap; padding: .5rem 0; margin-top: 1rem;">
+    <div style="text-align:center; display:flex; justify-content:center; gap:20px; flex-wrap: wrap; padding: .5rem 0; ">
         <a href="sobre.html" style="color:#f5af19;font-size:0.98rem;text-decoration:underline;opacity:.85">Sobre</a>
         <a href="politica-privacidade.html" style="color:#f5af19;font-size:0.98rem;text-decoration:underline;opacity:.85">Política de Privacidade</a>
     </div>

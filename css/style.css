@@ -5,7 +5,8 @@
 html {
     display: flex; justify-content: center; align-items: center;
     height: 100%;
-    width: 100%;
+    width: 100vw;
+    overflow-x: hidden;
 }
 
 body {
@@ -17,7 +18,7 @@ body {
     color: white;
     height: 100%;
     width: 100%;
-    padding: 1rem auto;
+    padding: .5rem auto;
 }
 
 /* ===== PARTÍCULAS FUNDO ===== */
@@ -53,7 +54,7 @@ body {
 
 /* ===== TELA INICIAL ===== */
 #telaInicial { 
-    padding-top: 3rem;
+    padding-top: 2rem;
     background: radial-gradient(ellipse at 50% 40%, #151535 0%, #07070f 70%); 
 }
 
